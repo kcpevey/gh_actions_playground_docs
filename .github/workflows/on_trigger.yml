@@ -48,9 +48,9 @@ jobs:
       - name: "Copy images to other repo"
         run: |
             ls
-            cp filename code_repo/.
+            cp newfile.txt code_repo/.
 
-      - name: "Create PR to conda-store with updated images"
+      - name: "Create PR with updated files"
         uses: peter-evans/create-pull-request@v5
         with:
           commit-message: Update report
