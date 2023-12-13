@@ -1,0 +1,30 @@
+name: on PR
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-run:
+    name: "test"
+    strategy:
+      matrix:
+        # cannot run on windows due to needing fake-chroot for conda-docker
+        # osx takes forever to get a scheduled job
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - name: "Checkout this repository 🛎"
+        uses: actions/checkout@v4
+
+
+      - name: "Upload artifacts"
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifact_data
+          path: README.md
