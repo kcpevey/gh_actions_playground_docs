@@ -21,10 +21,11 @@ jobs:
     steps:
       - name: "Checkout this repository 🛎"
         uses: actions/checkout@v4
-
+      - name: "create new file"
+        run: touch newfile.txt
 
       - name: "Upload artifacts"
         uses: actions/upload-artifact@v3
         with:
           name: artifact_data
-          path: README.md
+          path: newfile.txt
