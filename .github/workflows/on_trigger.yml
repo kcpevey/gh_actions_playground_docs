@@ -1,13 +1,13 @@
 name: update
 
 on:
-  pull_request:
-    types: [labeled]
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: "PR Number with screenshots to push"
-        required: true
+  # pull_request:
+  #   types: [labeled]
+  # workflow_dispatch:
+  #   inputs:
+  #     pr_number:
+  #       description: "PR Number with screenshots to push"
+  #       required: true
   workflow_run:
     workflows: ["on_pr"]
     types:
@@ -77,7 +77,8 @@ jobs:
             
       - name: "Copy images to other repo"
         run: |
-            cp artifact_data/newfile.txt code_repo/.
+            cd code_repo
+            cp ../artifact_data/newfile.txt .
             
             git config user.name 'autobot'
             git config user.email 'autobot@users.noreply.github.com'
