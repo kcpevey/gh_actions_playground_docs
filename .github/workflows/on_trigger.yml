@@ -1,8 +1,17 @@
 name: update
 
 on:
-  issue_comment:
-    types: [created]
+  pull_request:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR Number with screenshots to push"
+        required: true
+  workflow_run:
+    workflows: ["on_pr"]
+    types:
+      - success
 
 jobs:
   update:
@@ -11,15 +20,29 @@ jobs:
     defaults:
       run:
         shell: bash -el {0}
-    if: github.event.issue.pull_request && contains(github.event.comment.body, '/deploy')
+    if: ${{ github.event.label.name == 'update_screenshots' && github.event_name == 'pull_request' ||  github.event_name == 'workflow_dispatch' }}
     steps:
       - name: "Checkout the other repository 🛎"
         uses: actions/checkout@v4
         with:
           path: code_repo
           repository: 'kcpevey/gh_actions_playground_code'
-
-      - name: Download artifact
+      # # if this is triggered by workflow dispatch and a specific PR is given, use that PR number
+      # - name: Assign PR number if necessary
+      #   if: "${{ github.event.inputs.pr_number != '' }}"
+      #   run: | 
+      #     ${{ github.event.inputs.pr_number }}
+          
+      - name: Use this PR number or the one specified in workflow dispatch
+        run: |
+          if [[ ${{ github.event_name == 'workflow_dispatch' }} == true ]]; then
+            my_variable=${{ inputs.pr_number }}
+          else
+            PR_NUMBER=${{github.event.pull_request.number}}
+          fi
+          echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
+          
+      - name: Download artifact - will fail if 
         id: download-artifact
         uses: dawidd6/action-download-artifact@v3
         with:
@@ -30,19 +53,21 @@ jobs:
             # Optional, workflow file name or ID
             # If not specified, will be inferred from run_id (if run_id is specified), or will be the current workflow
             workflow: on_pr.yml
-            # Optional, the status or conclusion of a completed workflow to search for
-            # Can be one of a workflow conclusion:
-            #   "failure", "success", "neutral", "cancelled", "skipped", "timed_out", "action_required"
-            # Or a workflow status:
-            #   "completed", "in_progress", "queued"
-            # Use the empty string ("") to ignore status or conclusion in the search
-            workflow_conclusion: success
-            # Optional, defaults to all types
-            event: push
-            # Optional, will use specified workflow run
-            # use ${{ github.event.workflow_run.id }} when your action runs in a workflow_run event
-            # Optional, defaults to current repo
-            repo: ${{ github.repository }}
+            # # Optional, the status or conclusion of a completed workflow to search for
+            # # Can be one of a workflow conclusion:
+            # #   "failure", "success", "neutral", "cancelled", "skipped", "timed_out", "action_required"
+            # # Or a workflow status:
+            # #   "completed", "in_progress", "queued"
+            # # Use the empty string ("") to ignore status or conclusion in the search
+            # workflow_conclusion: success
+            # Optional, will get head commit SHA
+            pr: ${{ env.PR_NUMBER }}
+            # # Optional, defaults to all types
+            # event: push
+            # # Optional, will use specified workflow run
+            # # use ${{ github.event.workflow_run.id }} when your action runs in a workflow_run event
+            # # Optional, defaults to current repo
+            # repo: ${{ github.repository }}
             # Optional, choose how to exit the action if no artifact is found
             if_no_artifact_found: fail
         
@@ -55,7 +80,7 @@ jobs:
       - name: "Create PR with updated files"
         uses: peter-evans/create-pull-request@v5
         with:
-          commit-message: Update report
+          commit-message: Update screenshots
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           branch: update_images
