@@ -8,6 +8,10 @@ on:
       pr_number:
         description: "PR Number with screenshots to push"
         required: true
+  workflow_run:
+    workflows: ["on_pr"]
+    types:
+      - success
 
 jobs:
   update:
@@ -38,7 +42,7 @@ jobs:
           fi
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
           
-      - name: Download artifact
+      - name: Download artifact - will fail if 
         id: download-artifact
         uses: dawidd6/action-download-artifact@v3
         with:
