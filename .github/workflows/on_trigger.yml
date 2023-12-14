@@ -62,12 +62,12 @@ jobs:
             # workflow_conclusion: success
             # Optional, will get head commit SHA
             pr: ${{ env.PR_NUMBER }}
-            # Optional, defaults to all types
-            event: push
-            # Optional, will use specified workflow run
-            # use ${{ github.event.workflow_run.id }} when your action runs in a workflow_run event
-            # Optional, defaults to current repo
-            repo: ${{ github.repository }}
+            # # Optional, defaults to all types
+            # event: push
+            # # Optional, will use specified workflow run
+            # # use ${{ github.event.workflow_run.id }} when your action runs in a workflow_run event
+            # # Optional, defaults to current repo
+            # repo: ${{ github.repository }}
             # Optional, choose how to exit the action if no artifact is found
             if_no_artifact_found: fail
         
