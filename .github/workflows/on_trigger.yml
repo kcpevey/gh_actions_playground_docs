@@ -76,6 +76,7 @@ jobs:
       - name: "ls"
         run: |
             ls
+            pwd
             
       - name: "Copy images to other repo"
         run: |
