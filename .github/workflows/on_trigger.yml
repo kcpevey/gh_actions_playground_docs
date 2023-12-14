@@ -71,7 +71,6 @@ jobs:
             # Optional, choose how to exit the action if no artifact is found
             if_no_artifact_found: fail
         
-
       - name: "Copy images to other repo"
         run: |
             ls
