@@ -51,7 +51,7 @@ jobs:
             #   Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
             # Required, if the artifact is from a different repo
             # Required, if the repo is private a Personal Access Token with `repo` scope is needed or GitHub token in a job where the permissions `action` scope set to `read`
-            github_token: ${{ secrets.PAT }}
+            github_token: ${{ secrets.GITHUB_TOKEN }}
             # Optional, workflow file name or ID
             # If not specified, will be inferred from run_id (if run_id is specified), or will be the current workflow
             workflow: on_pr.yml
@@ -91,6 +91,7 @@ jobs:
       - name: "Create PR with updated files"
         uses: peter-evans/create-pull-request@v5
         with:
+          token: ${{ secrets.PAT }}
           path: code_repo
           commit-message: Update screenshots
           committer: GitHub <noreply@github.com>
