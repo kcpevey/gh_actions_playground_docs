@@ -1,17 +1,19 @@
 name: update
 
 on:
-  # pull_request:
-  #   types: [labeled]
-  # workflow_dispatch:
-  #   inputs:
-  #     pr_number:
-  #       description: "PR Number with screenshots to push"
-  #       required: true
-  workflow_run:
-    workflows: ["on_pr"]
-    types:
-      - success
+  pull_request:
+    types: [labeled]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR Number with screenshots to push"
+        required: true
+  # workflow_run:
+  #   workflows: ["on_pr"]
+  #   types:
+  #     - success
+      
+
 
 jobs:
   update:
