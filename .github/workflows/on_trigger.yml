@@ -77,7 +77,7 @@ jobs:
             
       - name: "Copy images to other repo"
         run: |
-            cp artifact_name/newfile.txt code_repo/.
+            cp artifact_data/newfile.txt code_repo/.
             
             git config user.name 'autobot'
             git config user.email 'autobot@users.noreply.github.com'
