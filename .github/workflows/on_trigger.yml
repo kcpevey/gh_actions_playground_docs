@@ -8,10 +8,12 @@ on:
       pr_number:
         description: "PR Number with screenshots to push"
         required: true
-  workflow_run:
-    workflows: ["on_pr"]
-    types:
-      - success
+  # workflow_run:
+  #   workflows: ["on_pr"]
+  #   types:
+  #     - success
+      
+
 
 jobs:
   update:
@@ -42,14 +44,14 @@ jobs:
           fi
           echo "PR_NUMBER=$PR_NUMBER" >> $GITHUB_ENV
           
-      - name: Download artifact - will fail if 
+      - name: Download artifact - will fail if artifact doesn't exist yet
         id: download-artifact
         uses: dawidd6/action-download-artifact@v3
         with:
             #   Optional, GitHub token, a Personal Access Token with `public_repo` scope if needed
             # Required, if the artifact is from a different repo
             # Required, if the repo is private a Personal Access Token with `repo` scope is needed or GitHub token in a job where the permissions `action` scope set to `read`
-            github_token: ${{secrets.GITHUB_TOKEN}}
+            github_token: ${{ secrets.GITHUB_TOKEN }}
             # Optional, workflow file name or ID
             # If not specified, will be inferred from run_id (if run_id is specified), or will be the current workflow
             workflow: on_pr.yml
@@ -70,16 +72,27 @@ jobs:
             # repo: ${{ github.repository }}
             # Optional, choose how to exit the action if no artifact is found
             if_no_artifact_found: fail
-        
 
-      - name: "Copy images to other repo"
+      - name: "ls"
         run: |
             ls
-            cp newfile.txt code_repo/.
+            pwd
+            
+      - name: "Copy images to other repo"
+        run: |
+            cd code_repo
+            cp ../artifact_data/newfile.txt .
+            
+            git config user.name 'autobot'
+            git config user.email 'autobot@users.noreply.github.com'
+            git add -A
+            git commit -m "commit all changes"
 
       - name: "Create PR with updated files"
         uses: peter-evans/create-pull-request@v5
         with:
+          token: ${{ secrets.PAT }}
+          path: code_repo
           commit-message: Update screenshots
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
